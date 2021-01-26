@@ -4,10 +4,10 @@ import json
 
 #Authorization
 def recordNewPlaytester(user_answers):
-    credentials = json.loads(os.environ.get('GDRIVE_CREDENTIALS'))
-    with open('gcreds.json', 'w') as fp:
-        json.dump(credentials, fp)
-    gc = pygsheets.authorize(client_secret='gcreds.json')
+    # credentials = json.loads(os.environ.get('GDRIVE_CREDENTIALS'))
+    # with open('gcreds.json', 'w') as fp:
+    #     json.dump(credentials, fp)
+    gc = pygsheets.authorize(service_account_env_var='GDRIVE_CREDENTIALS')
 
     #Open the google spreadsheet
     spreadsheet = gc.open('Playtest Signup').sheet1
