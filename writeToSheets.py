@@ -2,7 +2,7 @@ import pygsheets
 
 #Authorization
 def recordNewPlaytester(user_answers):
-    gc = pygsheets.authorize(client_secret='credentials.json')
+    gc = pygsheets.authorize(client_secret=GDRIVE_CREDENTIALS)
 
     #Open the google spreadsheet
     spreadsheet = gc.open('Playtest Signup').sheet1
