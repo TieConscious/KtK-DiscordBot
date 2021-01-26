@@ -1,8 +1,10 @@
 import pygsheets
+import os
 
 #Authorization
 def recordNewPlaytester(user_answers):
-    gc = pygsheets.authorize(client_secret=GDRIVE_CREDENTIALS)
+    credentials = os.environ.get('GDRIVE_CREDENTIALS')
+    gc = pygsheets.authorize(client_secret=credentials)
 
     #Open the google spreadsheet
     spreadsheet = gc.open('Playtest Signup').sheet1
