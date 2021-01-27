@@ -3,7 +3,7 @@ import os
 import asyncio
 
 from dotenv import load_dotenv
-from writeToSheets import recordNewPlaytester
+from writeToSheets import recordNewPlaytester, checkNewPlaytester
 from datetime import date, datetime
 
 load_dotenv()
@@ -24,6 +24,10 @@ async def on_message(message):
 
     if message.content == ('!playtest'):
         user = message.author
+
+        if (checkNewPlaytester(user.name + '#' + user.discriminator) == False):
+            return await user.send("It looks like you've already joined the Guild, " + user.name + ".")
+
         role_id = 780498456938545242 # playtester role id
         guild_id = 775937500643721218 # server id
         user_answers = [datetime.now().strftime("%m/%d/%Y %H:%M"), user.name + '#' + user.discriminator]
