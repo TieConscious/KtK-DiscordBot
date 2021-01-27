@@ -5,8 +5,10 @@ import json
 
 
 # Authorization
-# gc = pygsheets.authorize(service_account_env_var='GDRIVE_CREDENTIALS')
-gc = pygsheets.authorize(service_file='ktk-playtester-1611548901474-1547c6217fc8.json')
+gc = pygsheets.authorize(service_account_env_var='GDRIVE_CREDENTIALS')
+
+# For local testing
+# gc = pygsheets.authorize(service_file='ktk-playtester-1611548901474-1547c6217fc8.json')
 user_list = set()
 
 def checkNewPlaytester(user_name_discriminator):
