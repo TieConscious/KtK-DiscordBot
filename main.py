@@ -12,18 +12,8 @@ intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(prefix='!',intents=intents)
 
-
-@client.event
-async def on_ready():
-    print('We are the Swarm')
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content == ('!playtest'):
-        user = message.author
+def playtestCommand(message):
+    user = message.author
 
         if (checkNewPlaytester(user.name + '#' + user.discriminator) == False):
             return await user.send("It looks like you've already joined the Guild, " + user.name + ".")
@@ -31,18 +21,19 @@ async def on_message(message):
         role_id = 780498456938545242 # playtester role id
         guild_id = 775937500643721218 # server id
         user_answers = [datetime.now().strftime("%m/%d/%Y %H:%M"), user.name + '#' + user.discriminator]
-        opening = "Hello, traveller! Welcome to the Guild.\nIn this dark time, we're happy to have more allies\nBut... before we can accept you, you must pass a test."
+        opening = "Hello, traveller! Welcome to the Guild.\nIn this dark time, we're happy to have more allies.\nBut, before we can give you a key, you must answer some questions."
         user_timeout_msg = "I see you're still unsure of whether to join or not. Come again when you're ready.\n"
-        closing = "I suppose you pass, " + user.name + "."
+        closing = "You'll be a powerful ally, " + user.name + ". We take pride in you joining us. Here's your key: "
 
         questions = [
             'First, a simple question. Are you able to use SteamVR?',
-            'Too easy I see.\nNext, what headset do you use with SteamVR?',
+            'Next, what headset do you use with SteamVR?',
             'Last, how did you find out about "Kill the King"?'
         ]
 
         await user.send(opening)
 
+        # Ask questions and save responses
         for question in questions:
             def user_responded(m):
                 return m.author == user
@@ -60,10 +51,8 @@ async def on_message(message):
                 return await user.send(user_timeout_msg)
 
         print(user_answers)
-        await user.send(closing)
-        
 
-        # assign playtester role
+        # Assign playtester role and record answers to GSheets
         guild = client.get_guild(guild_id)
         if guild is None:
             return
@@ -75,10 +64,29 @@ async def on_message(message):
         try:
             member = guild.get_member(user.id)
             await member.add_roles(role)
-            recordNewPlaytester(user_answers)
+            steam_key = recordNewPlaytester(user_answers)
+            await user.send(closing + steam_key)
         except discord.HTTPException:
             print("didn't work")
             pass
+
+def resendSteamKey(message):
+    
+
+@client.event
+async def on_ready():
+    print('We are the Swarm')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content == ('!playtest'):
+        playtestCommand(message)
+    else if message.content == ('!key')
+        resendSteamKey(message)
+
 
 client.run(os.environ.get('TOKEN'))
 
