@@ -5,10 +5,10 @@ import json
 
 
 # Authorization
-gc = pygsheets.authorize(service_account_env_var='GDRIVE_CREDENTIALS')
+# gc = pygsheets.authorize(service_account_env_var='GDRIVE_CREDENTIALS')
 
 # For local testing
-# gc = pygsheets.authorize(service_file='ktk-playtester-1611548901474-1547c6217fc8.json')
+gc = pygsheets.authorize(service_file='ktk-playtester-1611548901474-1547c6217fc8.json')
 user_list = {}
 
 def cacheUserList():
@@ -32,15 +32,23 @@ def checkNewPlaytester(user_name_discriminator):
 
 
 def recordNewPlaytester(user_answers):
-    # Open the google spreadsheet
-    spreadsheet = gc.open('Playtest Signup').sheet1
+    gsheet = gc.open('Playtest Signup')
 
-    # Update a single cell.
+    # Find available Steam Key
+    key_sheet = gsheet.worksheet('title', 'SteamKeys')
+    cell = len(key_sheet.get_col(1, returnas='cell', include_tailing_empty=False))
+    key_sheet.update_value('B' + str(cell), 'Yes')
+    new_key = key_sheet.get_value('A' + str(cell))
+
+    # Record new user
+    spreadsheet = gsheet.worksheet('title', 'Playtesters')
+    user_answers.append(new_key)
     last_row = len(user_list)
     spreadsheet = spreadsheet.insert_rows(last_row, number=1, values=user_answers)
     
     # Add user to cache
-    return("1")
+    user_list[user_answers[1]] = new_key
+    return(new_key)
 
 
 def findSteamKey(user_name_discriminator):

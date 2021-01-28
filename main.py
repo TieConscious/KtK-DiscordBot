@@ -12,7 +12,7 @@ intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(prefix='!',intents=intents)
 
-def playtestCommand(message):
+async def playtestCommand(message):
     user = message.author
 
     if (checkNewPlaytester(user.name + '#' + user.discriminator) == False):
@@ -70,7 +70,7 @@ def playtestCommand(message):
         print("didn't work")
         pass
 
-def resendSteamKey(message):
+async def resendSteamKey(message):
     user = message.author
     key = findSteamKey(user.name + '#' + user.discriminator)
     if key == None:
@@ -88,9 +88,9 @@ async def on_message(message):
         return
 
     if message.content == ('!playtest'):
-        playtestCommand(message)
+        await playtestCommand(message)
     elif message.content == ('!key'):
-        resendSteamKey(message)
+        await resendSteamKey(message)
 
 
 client.run(os.environ.get('TOKEN'))
