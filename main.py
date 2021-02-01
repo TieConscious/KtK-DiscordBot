@@ -75,6 +75,8 @@ async def resendSteamKey(message):
     key = findSteamKey(user.name + '#' + user.discriminator)
     if key == None:
         await user.send("Looks like you'll have to join the Guild first. Try using !playtest.")
+    elif key == "unavailable":
+        await user.send("We're still out of keys, but we'll get yer one as soon as we can. Look out for a raven, it'll deliver it to ya.")
     else:
         await user.send("Aye, " + user.name + ", don't go around misplacing this. Ya never know who might steal it.\nKey: " + key)
 
