@@ -23,7 +23,7 @@ def checkNewPlaytester(user_name_discriminator):
 def steamKeysAvailable():
     gsheet = gc.open('Playtest Signup')
     key_sheet = gsheet.worksheet('title', 'SteamKeys')
-    cell = len(key_sheet.get_col(2, returnas='matrix', include_tailing_empty=False))
+    cell = len(key_sheet.get_col(2, returnas='matrix', include_tailing_empty=False))+1
     key_sheet.update_value('B' + str(cell), 'Yes')
 
     return key_sheet.get_value('A' + str(cell))
