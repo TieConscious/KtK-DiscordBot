@@ -3,7 +3,7 @@ import os
 import asyncio
 
 from dotenv import load_dotenv
-from writeToSheets import recordNewPlaytester, checkNewPlaytester, findSteamKey
+from writeToSheets import recordNewPlaytester, checkNewPlaytester, findSteamKey, needMoreKeys, rainCheckKey, whoNeedsKeys
 from datetime import date, datetime
 
 load_dotenv()
@@ -12,6 +12,9 @@ intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(prefix='!',intents=intents)
 
+noKeys = False
+guild_id = 775937500643721218 # server id
+
 async def playtestCommand(message):
     user = message.author
 
@@ -19,11 +22,11 @@ async def playtestCommand(message):
         return await user.send("It looks like you've already joined the Guild, " + user.name + ".")
 
     role_id = 780498456938545242 # playtester role id
-    guild_id = 775937500643721218 # server id
     user_answers = [datetime.now().strftime("%m/%d/%Y %H:%M"), user.name + '#' + user.discriminator]
     opening = "Hello, traveller! Welcome to the Guild.\nIn this dark time, we're happy to have more allies.\nBut, before we can give you a key, you must answer some questions."
     user_timeout_msg = "I see you're still unsure of whether to join or not. Come again when you're ready.\n"
     closing = "You'll be a powerful ally, " + user.name + ". We take pride in you joining us. Here's your key: "
+    noKeys = "We're out of keys right now, but we'll get yer one as soon as we can. Look out for a raven, it'll deliver it to ya."
 
     questions = [
         'First, a simple question. Are you able to use SteamVR?',
@@ -65,24 +68,51 @@ async def playtestCommand(message):
         member = guild.get_member(user.id)
         await member.add_roles(role)
         steam_key = recordNewPlaytester(user_answers)
-        await user.send(closing + steam_key)
+        if steam_key == None:
+            await user.send(noKeys)
+        else:    
+            await user.send(closing + steam_key)
     except discord.HTTPException:
         print("didn't work")
         pass
 
 async def resendSteamKey(message):
+    noKeys = "We're out of keys right now, but we'll get yer one as soon as we can. Look out for a raven, it'll deliver it to ya."
     user = message.author
     key = findSteamKey(user.name + '#' + user.discriminator)
+    
     if key == None:
         await user.send("Looks like you'll have to join the Guild first. Try using !playtest.")
     elif key == "unavailable":
-        await user.send("We're still out of keys, but we'll get yer one as soon as we can. Look out for a raven, it'll deliver it to ya.")
+        await user.send(noKeys)
     else:
         await user.send("Aye, " + user.name + ", don't go around misplacing this. Ya never know who might steal it.\nKey: " + key)
+
+
+async def needKeys():
+    # QuantumBois channel = 750884937531523162
+    while True:
+        print("beep boop")
+        noKeys = needMoreKeys()
+        if noKeys == True:
+            moo = client.get_user(150477278709678080)
+            await moo.send('Need more keys')
+        else:
+            user_list = whoNeedsKeys()
+            guild = client.get_guild(guild_id)
+            for user in user_list:
+                key = rainCheckKey(user)
+                if key != None:
+                    msg = guild.get_member_named(user)
+                    await msg.send("We found a key for you! Thank you for joining us!\nKey: " + key)
+        await asyncio.sleep(3600)
+
 
 @client.event
 async def on_ready():
     print('We are the Swarm')
+    await needKeys()
+
 
 @client.event
 async def on_message(message):
@@ -96,5 +126,4 @@ async def on_message(message):
 
 
 client.run(os.environ.get('TOKEN'))
-
 
