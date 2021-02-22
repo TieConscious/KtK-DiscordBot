@@ -25,12 +25,13 @@ async def playtestCommand(message):
     user_answers = [datetime.now().strftime("%m/%d/%Y %H:%M"), user.name + '#' + user.discriminator]
     opening = "Hello, traveller! Welcome to the Guild.\nIn this dark time, we're happy to have more allies.\nBut, before we can give you a key, you must answer some questions."
     user_timeout_msg = "I see you're still unsure of whether to join or not. Come again when you're ready.\n"
-    closing = "You'll be a powerful ally, " + user.name + ". We take pride in you joining us. Here's your key: "
+    closing = "You'll be a powerful ally, " + user.name + ". We take pride in you joining us. Here's your key: \n"
     noKeys = "We're out of keys right now, but we'll get yer one as soon as we can. Look out for a raven, it'll deliver it to ya."
-
+    steam_activation_instructons = "(For activating instructions: https://support.steampowered.com/kb_article.php?ref=5414-tfbn-1352)"
+    
     questions = [
-        'First, a simple question. Are you able to use SteamVR?',
-        'Next, what headset do you use with SteamVR?',
+        'First, a simple question. Have you wishlisted "Kill the King?" (https://store.steampowered.com/app/1537280/Kill_the_King/)',
+        'Next, what aspect of "Kill the King" is most exciting to you?',
         'Last, how did you find out about "Kill the King"?'
     ]
 
@@ -44,7 +45,7 @@ async def playtestCommand(message):
         await user.send(question)
 
         try:
-            a = await client.wait_for('message', check=user_responded, timeout=45.0)
+            a = await client.wait_for('message', check=user_responded, timeout=300.0)
         except asyncio.TimeoutError:
             return await user.send(user_timeout_msg)
         
@@ -72,6 +73,7 @@ async def playtestCommand(message):
             await user.send(noKeys)
         else:    
             await user.send(closing + steam_key)
+            await user.send(steam_activation_instructons)
     except discord.HTTPException:
         print("didn't work")
         pass
