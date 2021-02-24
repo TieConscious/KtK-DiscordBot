@@ -96,3 +96,25 @@ def rainCheckKey(user_name_discriminator):
         return key
     except ValueError:
         return None
+
+
+def getNewestPlaytesters():
+    col = 0
+    target_date = "2/22/2022"
+    sheet = gc.open('Single Player Playtest Signup (Responses)')
+    old_sheet = sheet.worksheet('title', 'Sheet1')
+
+    date_list = old_sheet.get_col(1, returnas='matrix', include_tailing_empty=False)
+    end = len(date_list)
+    for i, date in enumerate(date_list):
+        if target_date in date:
+            col = i+1
+            break
+
+    try:
+        user_list = old_sheet.get_values('D' + str(col), 'D' + str(end), returnas='matrix', include_tailing_empty=False)
+    except ValueError:
+        print("No users on attempt")
+        return None
+
+    return user_list
