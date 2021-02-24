@@ -1,6 +1,7 @@
 import discord
 import os
 import asyncio
+import sys
 
 from dotenv import load_dotenv
 from writeToSheets import recordNewPlaytester, checkNewPlaytester, findSteamKey, needMoreKeys, rainCheckKey, whoNeedsKeys
@@ -94,7 +95,6 @@ async def resendSteamKey(message):
 async def needKeys():
     # QuantumBois channel = 750884937531523162
     while True:
-        print("beep boop")
         noKeys = needMoreKeys()
         if noKeys == True:
             moo = client.get_user(150477278709678080)
@@ -105,8 +105,11 @@ async def needKeys():
             for user in user_list:
                 key = rainCheckKey(user)
                 if key != None:
-                    msg = guild.get_member_named(user)
-                    await msg.send("We found a key for you! Thank you for joining us!\nKey: " + key)
+                    try:
+                        msg = guild.get_member_named(user)
+                        await msg.send("We found a key for you! Thank you for joining us!\nKey: " + key)
+                    except:
+                        print(user + " error: " + sys.exc_info()[0])
         await asyncio.sleep(3600)
 
 
