@@ -42,5 +42,9 @@ async def on_ready():
 
     print('Completed adding Roles')
 
-
-client.run(os.environ.get('TOKEN'))
+try:
+    client.run(os.environ.get('LOCAL'))
+    print('local testing')
+except:
+    client.run(os.environ.get('TOKEN'))
+    print('deployed')
