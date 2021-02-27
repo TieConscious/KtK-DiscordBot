@@ -128,18 +128,19 @@ async def needKeys():
             for user in user_list:
                 key = rainCheckKey(user)
                 if key != None:
+                    msg = guild.get_member_named(user)
                     try:
-                        msg = guild.get_member_named(user)
                         await msg.send("We found a key for you! Thank you for joining us!\nKey: " + key)
+                        print(user + " : " + key)
                     except:
-                        print(user + " error: " + sys.exc_info()[0])
+                        print("Error")
         await asyncio.sleep(3600)
 
 
 @client.event
 async def on_ready():
     print('We are the Swarm')
-    await needKeys()
+    
 
 
 @client.event
@@ -151,16 +152,19 @@ async def on_message(message):
 
     if message.content == ('!playtest') and (message.channel.type is discord.ChannelType.private or message.channel.id == signup_channel):
         await playtestCommand(message)
+    elif message.content == ('!#givepeoplekeys'):
+        await needKeys()
     elif message.content == ('!key'):
         await resendSteamKey(message)
-    elif message.channel.type is discord.ChannelType.private:
-        await trollUser(message)
+    # elif message.channel.type is discord.ChannelType.private:
+    #     await trollUser(message)
+    
 
 def main():
-    if "LOCAL" in os.environ:
-        print('local testing')
-        client.run(os.environ.get('LOCAL'))
-    else:
+    # if "LOCAL" in os.environ:
+    #     print('local testing')
+    #     client.run(os.environ.get('LOCAL'))
+    # else:
         print('hosted')
         client.run(os.environ.get('TOKEN'))
 

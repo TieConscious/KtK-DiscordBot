@@ -82,6 +82,7 @@ def whoNeedsKeys():
         if key == "unavailable":
             user = spreadsheet.get_value('B' + str(i+1))
             user_list.append(user)
+            print(user)
 
     return user_list
 
